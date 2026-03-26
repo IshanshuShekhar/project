@@ -5,7 +5,7 @@ let barChart, lineChart, doughnutChart, efficiencyChart;
 async function analyze(){
 
     const data = {
-        water_usage: parseFloat(document.getElementById("water").value) || 0,
+        water_usge: parseFloat(document.getElementById("water").value) || 0,
         energy_usage: parseFloat(document.getElementById("energy").value) || 0,
         electricity_cost: parseFloat(document.getElementById("cost").value) || 0,
         waste_generated: parseFloat(document.getElementById("waste").value) || 0
