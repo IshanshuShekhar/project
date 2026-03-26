@@ -88,4 +88,4 @@ def analyze():
 # ---------------- RUN ----------------
 if __name__ == "__main__":
     print("🚀 SERVER STARTED ON PORT 5001")
-    app.run(debug=True, port=5002)
+    app.run(debug=True, port=5001)
