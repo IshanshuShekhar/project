@@ -1,3 +1,4 @@
+print("RUNNING FILE:", __file__)
 from flask import Flask, render_template, request, jsonify
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
@@ -87,4 +88,4 @@ def analyze():
 # ---------------- RUN ----------------
 if __name__ == "__main__":
     print("🚀 SERVER STARTED ON PORT 5001")
-    app.run(debug=True, port=5001)
+    app.run(debug=True, port=5002)
