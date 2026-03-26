@@ -1,3 +1,4 @@
+print("RUNNING FILE:", __file__)
 from flask import Flask, render_template, request, jsonify
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor

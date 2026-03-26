@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AI Sustainability Dashboard</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>AI Dashboard PRO</title>
+    <link rel="stylesheet" href="/static/style.css?v=5">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -10,23 +10,25 @@
 <h1>🚀 AI Sustainability Dashboard</h1>
 
 <div class="cards">
-    <div class="card"><h3>Water</h3><input id="water"></div>
-    <div class="card"><h3>Energy</h3><input id="energy"></div>
-    <div class="card"><h3>Cost</h3><input id="cost"></div>
-    <div class="card"><h3>Waste</h3><input id="waste"></div>
+    <div class="card"><h3>💧 Water</h3><input id="water"></div>
+    <div class="card"><h3>⚡ Energy</h3><input id="energy"></div>
+    <div class="card"><h3>💰 Cost</h3><input id="cost"></div>
+    <div class="card"><h3>🗑 Waste</h3><input id="waste"></div>
 </div>
 
 <button onclick="analyze()" class="analyze">Analyze</button>
 
-<!-- ✅ ALL CHARTS -->
-<canvas id="barChart"></canvas>
-<canvas id="lineChart"></canvas>
-<canvas id="doughnutChart"></canvas>
-<canvas id="efficiencyChart"></canvas>
+<div class="loader" id="loader"></div>
 
 <div id="result"></div>
 
-<script src="/static/script.js"></script>
+<div class="dashboard">
+    <div class="chart-box"><canvas id="barChart"></canvas></div>
+    <div class="chart-box"><canvas id="lineChart"></canvas></div>
+    <div class="chart-box"><canvas id="doughnutChart"></canvas></div>
+    <div class="chart-box"><canvas id="efficiencyChart"></canvas></div>
+</div>
 
+<script src="/static/script.js?v=5"></script>
 </body>
 </html>
