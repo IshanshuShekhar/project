@@ -1,42 +1,13 @@
-let barChart, lineChart, doughnutChart, efficiencyChart;
+let barChart, waterChart, energyChart, costChart;
 
-function animateValue(element, start, end, duration) {
-    let startTime = null;
-
-    function step(timestamp) {
-        if (!startTime) startTime = timestamp;
-        const progress = Math.min((timestamp - startTime) / duration, 1);
-        element.innerHTML = Math.floor(progress * (end - start) + start);
-        if (progress < 1) requestAnimationFrame(step);
-    }
-
-    requestAnimationFrame(step);
-}
-
-// 🤖 AI typing effect
-function typeEffect(text, element, speed = 20) {
-    element.innerHTML = "";
-    let i = 0;
-
-    function typing() {
-        if (i < text.length) {
-            element.innerHTML += text.charAt(i);
-            i++;
-            setTimeout(typing, speed);
-        }
-    }
-    typing();
-}
-
-async function analyze(){
-
-    document.getElementById("loader").style.display = "block";
-
+async function analyze() {
     const data = {
-        water_usage: parseFloat(water.value) || 0,
-        energy_usage: parseFloat(energy.value) || 0,
-        electricity_cost: parseFloat(cost.value) || 0,
-        waste_generated: parseFloat(waste.value) || 0
+        water_usage: +water.value || 0,
+        water_demand: +water_demand.value || 100,
+        energy_usage: +energy.value || 0,
+        energy_demand: +energy_demand.value || 80,
+        electricity_cost: +cost.value || 0,
+        waste_generated: +waste.value || 0
     };
 
     const res = await fetch("/analyze", {
@@ -44,74 +15,91 @@ async function analyze(){
         headers: {"Content-Type":"application/json"},
         body: JSON.stringify(data)
     });
-
     const r = await res.json();
 
-    document.getElementById("loader").style.display = "none";
+    result.innerHTML = `<h2>Score: ${r.score}</h2>
+                        <h3>Energy Prediction: ${r.prediction}</h3>`;
+    aiBox.innerHTML = `<h3>AI Suggestions</h3><p>${r.ai}</p>`;
+    savingsBox.innerHTML = `<h3>💰 Savings</h3><h2>₹ ${r.savings}</h2>`;
 
-    // Animated score
-    document.getElementById("result").innerHTML = `
-        <h2 id="score">0</h2>
-        <h3>⚡ Energy: ${r.prediction}</h3>
-        <p id="aiText"></p>
-    `;
+    createCharts(r, data);
+}
 
-    animateValue(document.getElementById("score"), 0, r.score, 1000);
-    typeEffect(r.ai, document.getElementById("aiText"));
+async function whatIf() {
+    const data = {
+        water_usage: +water.value || 0,
+        energy_usage: +energy.value || 0,
+        electricity_cost: +cost.value || 0,
+        waste_generated: +waste.value || 0
+    };
 
-    // Charts
-    if(barChart) barChart.destroy();
+    const res = await fetch("/whatif-ai", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify(data)
+    });
+    const r = await res.json();
+
+    whatBox.innerHTML = `<h3>🔮 What-If</h3><p>${r.whatif}</p>`;
+}
+
+function createCharts(r, data) {
+    const chartOptions = {
+        responsive:true,
+        plugins:{legend:{display:false}},
+        scales:{y:{beginAtZero:true,ticks:{color:'#fff'}}, x:{ticks:{color:'#fff'}}},
+        maintainAspectRatio:false
+    };
+
+    function destroyIfExists(chart) {
+        if(chart) chart.destroy();
+    }
+
+    destroyIfExists(barChart);
+    destroyIfExists(waterChart);
+    destroyIfExists(energyChart);
+    destroyIfExists(costChart);
+
+    // Main usage chart
     barChart = new Chart(document.getElementById("barChart"), {
-        type: "bar",
-        data: {
-            labels: ["Water","Energy","Cost","Waste"],
-            datasets: [{
-                data: [
-                    data.water_usage,
-                    data.energy_usage,
-                    data.electricity_cost,
-                    data.waste_generated
-                ]
+        type:"bar",
+        data:{
+            labels:["Water","Energy","Cost","Waste"],
+            datasets:[{
+                data:[data.water_usage,data.energy_usage,data.electricity_cost,data.waste_generated],
+                backgroundColor:["#00ffcc","#ff4d6d","#ffd60a","#4cc9f0"]
             }]
-        }
+        },
+        options: chartOptions
     });
 
-    if(lineChart) lineChart.destroy();
-    lineChart = new Chart(document.getElementById("lineChart"), {
-        type: "line",
-        data: {
-            labels: r.history.map((_,i)=>i+1),
-            datasets: [{ data: r.history }]
-        }
+    // Water Usage vs Demand
+    waterChart = new Chart(document.getElementById("waterChart"), {
+        type:"bar",
+        data:{
+            labels:["Water Usage","Water Demand"],
+            datasets:[{data:[data.water_usage,data.water_demand],backgroundColor:["#4cc9f0","#3a0ca3"]}]
+        },
+        options: chartOptions
     });
 
-    if(doughnutChart) doughnutChart.destroy();
-    doughnutChart = new Chart(document.getElementById("doughnutChart"), {
-        type: "doughnut",
-        data: {
-            labels: ["Water","Energy","Cost","Waste"],
-            datasets: [{
-                data: [
-                    data.water_usage,
-                    data.energy_usage,
-                    data.electricity_cost,
-                    data.waste_generated
-                ]
-            }]
-        }
+    // Energy Usage vs Demand
+    energyChart = new Chart(document.getElementById("energyChart"), {
+        type:"bar",
+        data:{
+            labels:["Energy Usage","Energy Demand"],
+            datasets:[{data:[data.energy_usage,data.energy_demand],backgroundColor:["#ff4d6d","#720026"]}]
+        },
+        options: chartOptions
     });
 
-    if(efficiencyChart) efficiencyChart.destroy();
-    efficiencyChart = new Chart(document.getElementById("efficiencyChart"), {
-        type: "bar",
-        data: {
-            labels: ["Water","Energy"],
-            datasets: [{
-                data: [
-                    (100 / Math.max(data.water_usage,1)) * 100,
-                    (80 / Math.max(data.energy_usage,1)) * 100
-                ]
-            }]
-        }
+    // Cost vs Savings
+    costChart = new Chart(document.getElementById("costChart"), {
+        type:"bar",
+        data:{
+            labels:["Cost","Estimated Savings"],
+            datasets:[{data:[data.electricity_cost,r.savings],backgroundColor:["#ffd60a","#00ff88"]}]
+        },
+        options: chartOptions
     });
 }

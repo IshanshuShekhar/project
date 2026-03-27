@@ -1,34 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AI Dashboard PRO</title>
-    <link rel="stylesheet" href="/static/style.css?v=5">
+    <title>AI Sustainability Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-
 <h1>🚀 AI Sustainability Dashboard</h1>
 
 <div class="cards">
-    <div class="card"><h3>💧 Water</h3><input id="water"></div>
-    <div class="card"><h3>⚡ Energy</h3><input id="energy"></div>
-    <div class="card"><h3>💰 Cost</h3><input id="cost"></div>
-    <div class="card"><h3>🗑 Waste</h3><input id="waste"></div>
+    <div class="card"><h3>Water</h3><input id="water" type="number" placeholder="Water usage"></div>
+    <div class="card"><h3>Water Demand</h3><input id="water_demand" type="number" placeholder="Target water"></div>
+    <div class="card"><h3>Energy</h3><input id="energy" type="number" placeholder="Energy usage"></div>
+    <div class="card"><h3>Energy Demand</h3><input id="energy_demand" type="number" placeholder="Target energy"></div>
+    <div class="card"><h3>Cost</h3><input id="cost" type="number" placeholder="Electricity cost"></div>
+    <div class="card"><h3>Waste</h3><input id="waste" type="number" placeholder="Waste generated"></div>
 </div>
 
-<button onclick="analyze()" class="analyze">Analyze</button>
+<div class="buttons">
+    <button onclick="analyze()" class="analyze">Analyze</button>
+    <button onclick="whatIf()" class="analyze">🔮 AI What-If</button>
+</div>
 
-<div class="loader" id="loader"></div>
-
-<div id="result"></div>
+<div id="result" class="result-box"></div>
+<div id="aiBox" class="ai-box"></div>
+<div id="whatBox" class="ai-box"></div>
+<div id="savingsBox" class="ai-box"></div>
 
 <div class="dashboard">
-    <div class="chart-box"><canvas id="barChart"></canvas></div>
-    <div class="chart-box"><canvas id="lineChart"></canvas></div>
-    <div class="chart-box"><canvas id="doughnutChart"></canvas></div>
-    <div class="chart-box"><canvas id="efficiencyChart"></canvas></div>
+    <div class="chart-container"><canvas id="barChart"></canvas></div>
+    <div class="chart-container"><canvas id="waterChart"></canvas></div>
+    <div class="chart-container"><canvas id="energyChart"></canvas></div>
+    <div class="chart-container"><canvas id="costChart"></canvas></div>
 </div>
 
-<script src="/static/script.js?v=5"></script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
